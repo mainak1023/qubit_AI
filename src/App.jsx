@@ -52,12 +52,12 @@ function App() {
       <div className="h-full max-w-4xl mx-auto flex flex-col p-3">
         {/* Fixed Header */}
         <header className="text-center py-4">
-          <a href="https://github.com/Vishesh-Pandey/chat-ai"
+          <a href="https://github.com/mainak1023/bingo_AI"
             target="_blank"
             rel="noopener noreferrer"
             className="block">
             <h1 className="text-4xl font-bold text-blue-500 hover:text-blue-600 transition-colors">
-              Chat AI
+              Chatterly AI
             </h1>
           </a>
         </header>
@@ -70,7 +70,7 @@ function App() {
           {chatHistory.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-6">
               <div className="bg-blue-50 rounded-xl p-8 max-w-2xl">
-                <h2 className="text-2xl font-bold text-blue-600 mb-4">Welcome to Bingo AI! 👋</h2>
+                <h2 className="text-2xl font-bold text-blue-600 mb-4">Welcome to Chatterly AI!</h2>
                 <p className="text-gray-600 mb-4">
                   I'm here to help you with anything you'd like to know. You can ask me about:
                 </p>
