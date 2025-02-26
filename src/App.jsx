@@ -29,8 +29,9 @@ function App() {
     setChatHistory(prev => [...prev, { type: 'question', content: currentQuestion }]);
 
     try {
+      const API_KEY = import.meta.env.VITE_CH_KEY;
       const response = await axios({
-        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyAnZGGM-enDd8sXg4VLxNetfhgYGqrLH6c`,
+        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
         method: "post",
         data: {
           contents: [{ parts: [{ text: question }] }],
@@ -70,7 +71,7 @@ function App() {
           {chatHistory.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-6">
               <div className="bg-blue-50 rounded-xl p-8 max-w-2xl">
-                <h2 className="text-2xl font-bold text-blue-600 mb-4">Welcome to Chatterly AI!</h2>
+                <h2 className="text-2xl font-bold text-blue-600 mb-4">Explore Me!</h2>
                 <p className="text-gray-600 mb-4">
                   I'm here to help you with anything you'd like to know. You can ask me about:
                 </p>
