@@ -1,111 +1,98 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 
 export default function ParticleBackground() {
-    useEffect(() => {
-        // Load particles.js library dynamically
-        const script = document.createElement("script")
-        script.src = "https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"
-        script.async = true
-        document.body.appendChild(script)
+    const canvasRef = useRef(null)
 
-        script.onload = () => {
-            window.particlesJS("particles-js", {
-                particles: {
-                    number: {
-                        value: 80,
-                        density: {
-                            enable: true,
-                            value_area: 800,
-                        },
-                    },
-                    color: {
-                        value: "#3b82f6",
-                    },
-                    shape: {
-                        type: "circle",
-                        stroke: {
-                            width: 0,
-                            color: "#000000",
-                        },
-                    },
-                    opacity: {
-                        value: 0.5,
-                        random: true,
-                        anim: {
-                            enable: true,
-                            speed: 1,
-                            opacity_min: 0.1,
-                            sync: false,
-                        },
-                    },
-                    size: {
-                        value: 3,
-                        random: true,
-                        anim: {
-                            enable: true,
-                            speed: 2,
-                            size_min: 0.1,
-                            sync: false,
-                        },
-                    },
-                    line_linked: {
-                        enable: true,
-                        distance: 150,
-                        color: "#3b82f6",
-                        opacity: 0.4,
-                        width: 1,
-                    },
-                    move: {
-                        enable: true,
-                        speed: 1,
-                        direction: "none",
-                        random: true,
-                        straight: false,
-                        out_mode: "out",
-                        bounce: false,
-                        attract: {
-                            enable: false,
-                            rotateX: 600,
-                            rotateY: 1200,
-                        },
-                    },
-                },
-                interactivity: {
-                    detect_on: "canvas",
-                    events: {
-                        onhover: {
-                            enable: true,
-                            mode: "grab",
-                        },
-                        onclick: {
-                            enable: true,
-                            mode: "push",
-                        },
-                        resize: true,
-                    },
-                    modes: {
-                        grab: {
-                            distance: 140,
-                            line_linked: {
-                                opacity: 1,
-                            },
-                        },
-                        push: {
-                            particles_nb: 4,
-                        },
-                    },
-                },
-                retina_detect: true,
+    useEffect(() => {
+        const canvas = canvasRef.current
+        if (!canvas) return
+
+        const ctx = canvas.getContext("2d")
+        if (!ctx) return
+
+        // Set canvas to full screen
+        const resizeCanvas = () => {
+            canvas.width = window.innerWidth
+            canvas.height = window.innerHeight
+        }
+
+        resizeCanvas()
+        window.addEventListener("resize", resizeCanvas)
+
+        // Particle settings
+        const particleCount = 100
+        const particles = []
+        const colors = ["#3b82f6", "#2563eb", "#60a5fa", "#93c5fd"]
+
+        // Create particles
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2 + 0.5,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                vx: Math.random() * 0.2 - 0.1,
+                vy: Math.random() * 0.2 - 0.1,
+                connect: [],
             })
         }
 
+        // Animation loop
+        const animate = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+            // Update and draw particles
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i]
+
+                // Move particles
+                p.x += p.vx
+                p.y += p.vy
+
+                // Bounce off edges
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1
+
+                // Draw particle
+                ctx.beginPath()
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
+                ctx.fillStyle = p.color
+                ctx.fill()
+
+                // Find connections
+                p.connect = []
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p2 = particles[j]
+                    const dx = p.x - p2.x
+                    const dy = p.y - p2.y
+                    const dist = Math.sqrt(dx * dx + dy * dy)
+
+                    if (dist < 100) {
+                        p.connect.push(j)
+
+                        // Draw connection
+                        ctx.beginPath()
+                        ctx.moveTo(p.x, p.y)
+                        ctx.lineTo(p2.x, p2.y)
+                        ctx.strokeStyle = `rgba(59, 130, 246, ${0.2 * (1 - dist / 100)})`
+                        ctx.lineWidth = 0.5
+                        ctx.stroke()
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate)
+        }
+
+        animate()
+
         return () => {
-            document.body.removeChild(script)
+            window.removeEventListener("resize", resizeCanvas)
         }
     }, [])
 
-    return null
+    return <canvas ref={canvasRef} className="absolute inset-0" />
 }
 
